@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_NIKE_API_URL=${VITE_NIKE_API_URL:-http://localhost:8000}
+        - VITE_CENTAURO_API_URL=${VITE_CENTAURO_API_URL:-http://localhost:8001}
+        - VITE_APP_NAME=${VITE_APP_NAME:-SBF Integrações}
+        - VITE_APP_VERSION=${VITE_APP_VERSION:-2.0.0}
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    networks:
+      - sbf-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  sbf-network:
+    driver: bridge
