@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/MainLayout';
+import StatusFilterMultiSelect from '../../components/StatusFilterMultiSelect';
 import { shipmentsService } from '../../services/shipments';
-import type { ShipmentListItem } from '../../types';
+import { STATUS_CODES, getStatusCategoryColor } from '../../constants/statusCodes';
+import type { ShipmentListItem, StatusCode } from '../../types';
 import ShipmentDetailsModal from '../../components/ShipmentDetailsModal';
 import UpdateStatusModal from '../../components/UpdateStatusModal';
 import UploadXmlModal from '../../components/UploadXmlModal';
@@ -11,6 +13,7 @@ const NikeDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatuses, setSelectedStatuses] = useState<StatusCode[]>([]);
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
@@ -42,13 +45,17 @@ const NikeDashboard: React.FC = () => {
     const remetenteDoc = shipment.rem?.nDoc || '';
     const destinatarioDoc = shipment.dest?.nDoc || '';
 
-    return (
+    const matchesSearch = 
       externalRef.includes(search) ||
       remetenteDoc.includes(search) ||
       destinatarioDoc.includes(search) ||
       remetenteNome.includes(search) ||
-      destinatarioNome.includes(search)
-    );
+      destinatarioNome.includes(search);
+
+    const matchesStatus = selectedStatuses.length === 0 || 
+      selectedStatuses.some(s => s.codigo.toString() === shipment.status?.codigo?.toString());
+
+    return matchesSearch && matchesStatus;
   });
 
   const handleViewDetails = (id: string) => {
@@ -81,14 +88,20 @@ const NikeDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mb-6">
+        {/* Filters */}
+        <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="Buscar por minuta, CNPJ ou nome..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <StatusFilterMultiSelect
+            selectedStatuses={selectedStatuses}
+            onStatusChange={setSelectedStatuses}
+            statusOptions={STATUS_CODES}
+            placeholder="Filtrar por status..."
           />
         </div>
 
@@ -162,8 +175,16 @@ const NikeDashboard: React.FC = () => {
                           <div className="text-gray-500">{shipment.dest?.nDoc || '-'}</div>
                           <div className="text-gray-500">{shipment.dest?.municipioNome || ''} - {shipment.dest?.UF || ''}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {shipment.status?.descricao || '-'}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {shipment.status ? (
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              getStatusCategoryColor(shipment.status.categoria)
+                            }`}>
+                              {shipment.status.descricao}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-500">-</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                           <button

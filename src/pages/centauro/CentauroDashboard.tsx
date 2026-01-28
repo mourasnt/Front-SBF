@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/MainLayout';
+import StatusFilterMultiSelect from '../../components/StatusFilterMultiSelect';
 import { centauroShipmentsService } from '../../services/centauroShipments';
-import { getCentauroStatusInfo, getCentauroStatusCategories } from '../../types/centauro';
+import { getCentauroStatusInfo } from '../../types/centauro';
+import { STATUS_CODES, getStatusCategoryColor } from '../../constants/statusCodes';
 import type { CentauroShipmentListItem } from '../../types/centauro';
+import type { StatusCode } from '../../types';
 import CentauroShipmentDetailsModal from './CentauroShipmentDetailsModal';
 import CentauroUpdateStatusModal from './CentauroUpdateStatusModal';
 
@@ -11,12 +14,10 @@ const CentauroDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [selectedStatuses, setSelectedStatuses] = useState<StatusCode[]>([]);
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-
-  const statusCategories = getCentauroStatusCategories();
 
   const loadShipments = async () => {
     try {
@@ -48,8 +49,8 @@ const CentauroDashboard: React.FC = () => {
       originCity.includes(search) ||
       destCity.includes(search);
 
-    const matchesStatus = !statusFilter || 
-      shipment.status?.type?.toLowerCase() === statusFilter.toLowerCase();
+    const matchesStatus = selectedStatuses.length === 0 || 
+      selectedStatuses.some(s => s.codigo.toString() === shipment.status?.code?.toString());
 
     return matchesSearch && matchesStatus;
   });
@@ -64,20 +65,6 @@ const CentauroDashboard: React.FC = () => {
     setStatusModalOpen(true);
   };
 
-  const getStatusBadgeColor = (type?: string) => {
-    const colors: Record<string, string> = {
-      'Emissao': 'bg-blue-100 text-blue-800',
-      'Transito': 'bg-yellow-100 text-yellow-800',
-      'Finalizada': 'bg-green-100 text-green-800',
-      'PENDENCIA': 'bg-red-100 text-red-800',
-      'Conferencia': 'bg-purple-100 text-purple-800',
-      'Deposito': 'bg-indigo-100 text-indigo-800',
-      'Geral': 'bg-gray-100 text-gray-800',
-      'PRE-EMISSAO': 'bg-orange-100 text-orange-800',
-    };
-    return colors[type || ''] || 'bg-gray-100 text-gray-800';
-  };
-
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto">
@@ -90,7 +77,7 @@ const CentauroDashboard: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="Buscar por ID, cliente ou cidade..."
@@ -98,16 +85,12 @@ const CentauroDashboard: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-          >
-            <option value="">Todos os Status</option>
-            {statusCategories.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+          <StatusFilterMultiSelect
+            selectedStatuses={selectedStatuses}
+            onStatusChange={setSelectedStatuses}
+            statusOptions={STATUS_CODES}
+            placeholder="Filtrar por status..."
+          />
         </div>
 
         {/* Error Message */}
@@ -186,9 +169,15 @@ const CentauroDashboard: React.FC = () => {
                           <div className="text-gray-500 text-xs">{shipment.destination_state?.uf || ''}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeColor(shipment.status?.type)}`}>
-                            {shipment.status?.message || getCentauroStatusInfo(shipment.status?.code || '10').message}
-                          </span>
+                          {shipment.status?.code ? (
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              getStatusCategoryColor(shipment.status?.type || 'Geral')
+                            }`}>
+                              {shipment.status.code} - {shipment.status?.message || getCentauroStatusInfo(shipment.status?.code || '10').message}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-gray-500">-</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                           <span className="inline-flex items-center px-2 py-1 rounded bg-gray-100 text-gray-700 text-xs">
