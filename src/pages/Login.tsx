@@ -43,7 +43,7 @@ const Login: React.FC = () => {
           
           {/* Integrações SBF centralizado */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <span className="text-blue-950 font-semibold text-xl tracking-tight drop-shadow-md">Integrações SBF</span>
+            <span className="text-blue-950 font-semibold text-xl tracking-tight drop-shadow-md">Integração SBF</span>
           </div>
           
           {/* Espaço vazio à direita para manter simetria */}
