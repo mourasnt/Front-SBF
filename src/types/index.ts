@@ -67,7 +67,7 @@ export interface Shipment {
   destino?: { uf?: string; municipio?: string };
   invoices?: ShipmentInvoice[];
   status?: {
-    codigo: number;
+    codigo: number | string;
     descricao: string;
     categoria: string;
   };
