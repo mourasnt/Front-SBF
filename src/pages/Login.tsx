@@ -32,14 +32,33 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white-800 to-amber-50 relative">
+      {/* TopBar com efeito de vidro fosco */}
+      <div className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/10 border-b border-white/20 shadow-lg">
+        <div className="flex items-center justify-between h-16 px-4 relative">
+          {/* Logo 3zx à esquerda */}
+          <div className="flex items-center">
+            <img src="/logo.png" alt="3zx Logo" className="h-12 w-auto" />
+          </div>
+          
+          {/* Integrações SBF centralizado */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <span className="text-blue-950 font-semibold text-xl tracking-tight drop-shadow-md">Integrações SBF</span>
+          </div>
+          
+          {/* Espaço vazio à direita para manter simetria */}
+          <div className="w-10"></div>
+        </div>
+      </div>
+      {/* Conteúdo com padding-top para não ficar atrás da topbar */}
+      <div className="min-h-screen flex items-center justify-center p-6 pt-24">
       <div className="max-w-5xl w-full grid md:grid-cols-2 gap-6 drop-shadow-2xl">
         {/* Hero / Branding */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white p-8 flex flex-col justify-between">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-amber-500 text-white p-8 flex flex-col justify-between">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.15),_transparent_45%)]" aria-hidden />
           <div className="relative space-y-4">
             <p className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.2em] bg-white/15 px-3 py-1 rounded-full border border-white/20 shadow-sm">
-              SBF Integrações
+              Integração SBF
             </p>
             <h1 className="text-3xl font-bold leading-tight">Gestão de Cargas com eficiência e visibilidade total.</h1>
             <p className="text-white/80 text-sm leading-relaxed">
@@ -68,7 +87,7 @@ const Login: React.FC = () => {
           <div className="relative mt-6 grid grid-cols-2 gap-4 text-sm">
             <div className="bg-white/10 rounded-xl p-3 backdrop-blur border border-white/10">
               <p className="text-white/70">Status</p>
-              <p className="text-lg font-semibold">60+ códigos</p>
+              <p className="text-lg font-semibold">Tracking integrado</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3 backdrop-blur border border-white/10">
               <p className="text-white/70">CTe XML</p>
@@ -80,7 +99,6 @@ const Login: React.FC = () => {
         {/* Form */}
         <div className="bg-white rounded-2xl p-8 md:p-10 flex flex-col justify-center border border-slate-100 shadow-lg">
           <div className="space-y-1 mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">Acesso centralizado</p>
             <h2 className="text-2xl font-bold text-slate-900">Entrar na plataforma</h2>
             <p className="text-sm text-slate-500">Login único para todas as integrações (Nike e Centauro).</p>
           </div>
@@ -104,7 +122,7 @@ const Login: React.FC = () => {
                   required
                   value={usuario}
                   onChange={(e) => setUsuario(e.target.value)}
-                  className="block w-full rounded-lg border border-slate-200 px-3 py-2.5 text-slate-900 placeholder-slate-400 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 focus:ring-offset-orange-50"
+                  className="block w-full rounded-lg border border-slate-200 px-3 py-2.5 text-slate-900 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-blue-50"
                   placeholder="Digite seu usuário"
                 />
               </div>
@@ -120,7 +138,7 @@ const Login: React.FC = () => {
                   required
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  className="block w-full rounded-lg border border-slate-200 px-3 py-2.5 text-slate-900 placeholder-slate-400 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 focus:ring-offset-orange-50"
+                  className="block w-full rounded-lg border border-slate-200 px-3 py-2.5 text-slate-900 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-blue-50"
                   placeholder="Digite sua senha"
                 />
               </div>
@@ -130,7 +148,7 @@ const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-gradient-to-r from-orange-600 to-amber-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/30 transition hover:from-orange-700 hover:to-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:from-blue-700 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? (
                   <>
@@ -149,10 +167,14 @@ const Login: React.FC = () => {
           
           <div className="mt-8 pt-6 border-t border-slate-200">
             <p className="text-xs text-center text-slate-400">
-              SBF Integrações v2.0 - Gestão de Cargas
+              Integração SBF v2.0
+            </p>
+            <p className="text-xs text-center text-slate-400">
+               &copy; 2024 3zx Transporte e Tecnologia. Todos os direitos reservados.
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

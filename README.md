@@ -1,4 +1,4 @@
-# SBF Integrações - Front-end
+# Integração SBF- Front-end
 
 Front-end para gestão de cargas das integrações SBF (Nike e Centauro), desenvolvido com React, TypeScript e Vite.
 
