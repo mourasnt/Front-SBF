@@ -170,7 +170,7 @@ const Login: React.FC = () => {
               Integração SBF v2.0
             </p>
             <p className="text-xs text-center text-slate-400">
-               &copy; 2024 3zx Transporte e Tecnologia. Todos os direitos reservados.
+               &copy; {new Date().getFullYear()} 3zx Transporte e Tecnologia. Todos os direitos reservados.
             </p>
           </div>
         </div>
